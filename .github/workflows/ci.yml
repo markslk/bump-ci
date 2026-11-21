@@ -25,3 +25,18 @@ jobs:                                     # WHAT to run: one or more jobs
 
       - name: Test
         run: pytest -v                    # stage 2: exit code 1 here turns the run red
+
+  build:
+    needs: test  # wait for the test job
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Pack
+        run: |
+          mkdir -p dist 
+          tar -czf dist/bump.tar.gz bump.py 
+      - name: Distribute package
+        uses: actions/upload-artifact@v6
+        with:
+          name: bump-package
+          path: dist/bump.tar.gz
